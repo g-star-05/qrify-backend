@@ -5,9 +5,7 @@ import qrcode
 from fastapi import HTTPException
 
 
-QR_FOLDER = (
-    "app/static/generated_qr"
-)
+QR_FOLDER = "app/static/generated_qr"
 
 os.makedirs(
     QR_FOLDER,
@@ -29,25 +27,19 @@ def generate_qr(data):
 
         )
 
+    qr_text = data.text.strip()
 
-    qr_text = (
-        data.text.strip()
-    )
-
+    # Auto add https
 
     if (
 
         "." in qr_text
 
-        and
-
-        not qr_text.startswith(
+        and not qr_text.startswith(
             "http://"
         )
 
-        and
-
-        not qr_text.startswith(
+        and not qr_text.startswith(
             "https://"
         )
 
@@ -58,11 +50,7 @@ def generate_qr(data):
             + qr_text
         )
 
-
-    filename = (
-        f"{uuid.uuid4()}.png"
-    )
-
+    filename = f"{uuid.uuid4()}.png"
 
     filepath = os.path.join(
 
@@ -71,7 +59,6 @@ def generate_qr(data):
         filename
 
     )
-
 
     qr = qrcode.QRCode(
 
@@ -86,7 +73,6 @@ def generate_qr(data):
 
     )
 
-
     qr.add_data(
         qr_text
     )
@@ -94,7 +80,6 @@ def generate_qr(data):
     qr.make(
         fit=True
     )
-
 
     fill_color = (
 
@@ -106,7 +91,6 @@ def generate_qr(data):
 
     )
 
-
     bg_color = (
 
         data.background
@@ -116,7 +100,6 @@ def generate_qr(data):
         else "#ffffff"
 
     )
-
 
     image = qr.make_image(
 
@@ -128,17 +111,15 @@ def generate_qr(data):
 
     )
 
-
     image.save(
         filepath
     )
-
 
     qr_data = {
 
         "id":
 
-        len(qr_history)+1,
+        len(qr_history) + 1,
 
         "text":
         qr_text,
@@ -149,21 +130,19 @@ def generate_qr(data):
         "background":
         bg_color,
 
-        # IMPORTANT FIX
+        # Frontend uses response.data.qr_url
+
         "qr_url":
 
         f"/static/generated_qr/{filename}"
 
     }
 
-
     qr_history.append(
         qr_data
     )
 
-
     return qr_data
-
 
 
 def get_qr_history():
@@ -171,17 +150,18 @@ def get_qr_history():
     return {
 
         "count":
+
         len(qr_history),
 
         "data":
+
         qr_history
 
     }
 
 
-
 def delete_qr(
-    qr_id:int
+    qr_id: int
 ):
 
     global qr_history
@@ -204,6 +184,6 @@ def delete_qr(
 
         "message":
 
-        "Deleted"
+        "Deleted Successfully"
 
     }
