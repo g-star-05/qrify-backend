@@ -57,6 +57,8 @@ app.mount(
 
 # CORS
 
+# CORS
+
 app.add_middleware(
 
     CORSMiddleware,
@@ -65,15 +67,19 @@ app.add_middleware(
 
         "https://qrify-49bm.onrender.com",
 
-        "http://localhost:5173"
+        "http://localhost:5173",
+
+        "*"
 
     ],
 
-    allow_credentials=True,
+    allow_credentials=False,
 
     allow_methods=["*"],
 
-    allow_headers=["*"]
+    allow_headers=["*"],
+
+    expose_headers=["*"]
 
 )
 
