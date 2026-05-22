@@ -26,11 +26,14 @@ def generate_qr(data):
             status_code=400,
 
             detail="Text required"
+
         )
+
 
     qr_text = (
         data.text.strip()
     )
+
 
     if (
 
@@ -55,16 +58,20 @@ def generate_qr(data):
             + qr_text
         )
 
+
     filename = (
         f"{uuid.uuid4()}.png"
     )
+
 
     filepath = os.path.join(
 
         QR_FOLDER,
 
         filename
+
     )
+
 
     qr = qrcode.QRCode(
 
@@ -76,7 +83,9 @@ def generate_qr(data):
         box_size=10,
 
         border=4
+
     )
+
 
     qr.add_data(
         qr_text
@@ -86,17 +95,28 @@ def generate_qr(data):
         fit=True
     )
 
+
     fill_color = (
+
         data.color
+
         if data.color
+
         else "#000000"
+
     )
 
+
     bg_color = (
+
         data.background
+
         if data.background
+
         else "#ffffff"
+
     )
+
 
     image = qr.make_image(
 
@@ -108,13 +128,16 @@ def generate_qr(data):
 
     )
 
+
     image.save(
         filepath
     )
 
+
     qr_data = {
 
         "id":
+
         len(qr_history)+1,
 
         "text":
@@ -126,15 +149,21 @@ def generate_qr(data):
         "background":
         bg_color,
 
-        "image_url":
+        # IMPORTANT FIX
+        "qr_url":
+
         f"/static/generated_qr/{filename}"
+
     }
+
 
     qr_history.append(
         qr_data
     )
 
+
     return qr_data
+
 
 
 def get_qr_history():
@@ -146,14 +175,35 @@ def get_qr_history():
 
         "data":
         qr_history
+
     }
+
 
 
 def delete_qr(
     qr_id:int
 ):
 
+    global qr_history
+
+    qr_history = [
+
+        qr
+
+        for qr
+
+        in qr_history
+
+        if qr["id"]
+
+        != qr_id
+
+    ]
+
     return {
+
         "message":
+
         "Deleted"
+
     }
